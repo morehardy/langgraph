@@ -84,6 +84,9 @@ def merge_configs(*configs: RunnableConfig | None) -> RunnableConfig:
 
     Returns:
         RunnableConfig: The merged config.
+    
+    Raises:
+        TypeError: If any of the provided configs is not a mapping (and not None).
     """
     base: RunnableConfig = {}
     # Even though the keys aren't literals, this is correct
@@ -91,6 +94,10 @@ def merge_configs(*configs: RunnableConfig | None) -> RunnableConfig:
     for config in configs:
         if config is None:
             continue
+        if not isinstance(config, Mapping):
+            raise TypeError(
+                f"Expected config to be a mapping (dict), but got {type(config).__name__}: {config}"
+            )
         for key, value in config.items():
             if not value:
                 continue
@@ -280,6 +287,9 @@ def ensure_config(*configs: RunnableConfig | None) -> RunnableConfig:
 
     Returns:
         RunnableConfig: The merged and ensured config.
+
+    Raises:
+        TypeError: If any of the provided configs is not a mapping (and not None).
     """
     empty = RunnableConfig(
         tags=[],
@@ -299,6 +309,10 @@ def ensure_config(*configs: RunnableConfig | None) -> RunnableConfig:
     for config in configs:
         if config is None:
             continue
+        if not isinstance(config, Mapping):
+            raise TypeError(
+                f"Expected config to be a mapping (dict), but got {type(config).__name__}: {config}"
+            )
         for k, v in config.items():
             if _is_not_empty(v) and k in CONFIG_KEYS:
                 if k == CONF:
